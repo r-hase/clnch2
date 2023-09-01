@@ -1,0 +1,421 @@
+素早いキーボードランチャ [ CraftLaunch ] Tips
+
+◆ CraftLaunch本体から、コマンドを編集する
+
+    コマンド入力欄に次のように入力すれば、NETSCAPEというコマンドを編集
+    することが出来ます。
+
+        &SetCommand;NETSCAPE
+
+    NETSCAPEというコマンドがすでにあれば、それを変更し、なければ新規
+    作成します。
+
+
+◆ CraftLaunch本体から、もっと素早く、コマンドを編集する
+
+    ショートカットコマンドを使うと、もうちょっと素早くコマンドを編集
+    出来ます。
+
+    Alt + Return のショートカットコマンドに、&SetCommand を設定してある
+    として、次の手順で操作します。
+
+        1, (補完を使って) [ NETSCAPE ] を入力
+        2, Alt + Return
+
+    これで、&SetCommand;NETSCAPE を実行できます。
+
+
+◆ コマンドの Link先を素早く開く
+
+    次のようなコマンドを登録し、適当なキーのショートカットコマンド
+    として登録しておきます。
+
+        Name : ListLinkDir
+        Link : &SubCommand
+        Arg  : &TextOut;%LinkDir[%arg]/,&SetCaret;-1,&PopFileList
+
+    たとえば Alt + → に登録した場合、
+
+        1, コマンド入力欄にコマンドを入力
+        2, Alt + →
+
+    これでコマンドのLink先のディレクトリがリスト表示されます。
+
+
+◆ http://www. や mailto: 等を補完する
+
+    http://www.という名前の空のコマンドを登録すれば、http://www.、を
+    コマンド入力欄で途中まで入力しただけで、補完することが可能です。
+
+    同様にして、mailto: や、&WinActivate 等も、空のコマンドを登録する
+    ことで、補完が可能になります。
+
+
+◆ &CD はどうやって使うのか
+
+    登録コマンドの [Folder] を空欄にしておくと、アプリケーションの作業
+    ディレクトリは、CraftLaunchのカレントディレクトリと同じになります。
+
+        Name  : TextEdit
+        Link  : C:\ols\editor\editor.exe
+        Arg   :
+        Folder:                            ← 空欄にしておく
+
+    こうすると、CraftLaunchのカレントディレクトリのファイル [ file00.txt ]
+    を編集する際には、
+
+        TextEdit ; file00.txt
+
+    で済むことになります。( フルパスを与える必要がなくなります )
+
+
+    まれに、Folderの欄を空欄にしておいても、CraftLaunchのカレントディレクトリ
+    が引き継がれないアプリケーションがありますが、次のようにして回避できる
+    かもしれません。
+
+        Name  : TextEdit
+        Link  : C:\ols\editor\editor.exe
+        Arg   :
+        Folder: %pwd                           ← 実行時に置換される
+
+    %pwd は カレントディレクトリを意味する置換文字列で、実行時に置換されます。
+
+
+◆ CraftLaunchを、ファイラのプラグインみたいなものとして使う
+
+    ファイラから CraftLaunch を引数付きで呼ぶことで、CraftLaunchを
+    ファイラの一部であるかのように、操作することが可能です。
+
+    次の例は、２画面ファイラ [あふ] から、CraftLaunchを呼ぶための設定
+    です。ファイラの選択のファイルを引数として、コマンド入力を待ちます。
+
+        c:\ols\clnch\clnch.exe /wr /x50 /y40 /w300 /c2 ;$J;$MF
+
+    一般形は次のようになります。
+
+      <CraftLaunchのパス>
+            /wr /x<位置X> /y<位置Y> /w<サイズW>
+            /c<カーソル位置>
+            <引数区切り文字><渡したいファイル名を引数区切り文字で区切ったもの>
+
+       ※ /wr をつけているので、位置はファイラのウインドウ内の百分率(%)指定
+       ※ ファイラに、実行時にパスやファイル名に置換されるマクロが必要です
+
+
+◆ CraftLaunchを、もっと、ファイラのプラグインみたいなものとして使う
+
+    &HiddenCommand を応用することで、CraftLaunchとファイラとの親和性を
+    さらに高めることが可能です
+
+    以下は、２画面ファイラ [あふ] のディレクトリを、CraftLaunchのファイル名補完
+    を使ってすばやく変更するサンプルです。
+
+    まず、
+
+    Name : AfxOpenRight
+    Link : c:\afx\afx.exe
+    Arg  : -s;-r"%FullPath[%arg]"
+
+    というコマンドを登録しておき、
+
+    [あふ] の空いているキーに、キーカスタマイズ機能を使って以下のコマンドを登録
+    します。
+
+    c:\clnch\clnch.exe /wr /x50 /y20 /w100 /c2
+                            "&HiddenCommand;AfxOpenRight" "&CD;$P" "$P\\"
+
+    こうすることで、
+
+        1, ファイラから１キーで CraftLaunch を起動
+        2, ディレクトリをファイル名補完を駆使してすばやく編集
+        3, Enter
+
+    という、よりファイラの一部であるかのような動作が可能になります。
+
+
+◆ インターネット検索エンジン／辞書／翻訳サービスを利用する
+
+    CraftLaunchに、
+
+        Name : Google
+        Link : http://www.google.com/search?q=%arg
+
+    のようなコマンドを登録しておいて、
+
+        Google;<検索したい文字列>
+
+    と入力すると、デフォルトのWEBブラウザで検索結果が表示されます。
+
+
+    ・Yahoo
+      http://search.yahoo.co.jp/bin/search?p=%arg
+
+    ・goo
+      http://www.goo.ne.jp/default.asp?MT=%arg
+
+    ・infoseek
+      http://www.infoseek.co.jp/Titles?qt=%arg
+
+    ・Google
+      http://www.google.com/search?q=%arg
+
+    ・goo のEXCEED英和辞書
+      http://dictionary.goo.ne.jp/cgi-bin/dict_search.cgi?MT=%arg&sw=0
+
+    ・goo のEXCEED和英辞書
+      http://dictionary.goo.ne.jp/cgi-bin/dict_search.cgi?MT=%arg&sw=1
+
+    ・goo の大辞林国語辞典
+      http://dictionary.goo.ne.jp/cgi-bin/dict_search.cgi?MT=%arg&sw=2
+
+    ・goo のデイリー新語時点
+      http://dictionary.goo.ne.jp/cgi-bin/dict_search.cgi?MT=%arg&sw=3
+
+    ・excite の 英和辞書
+      http://www.excite.co.jp/world/text/?wb_lp=ENJA&before=%arg
+
+    ・excite の 和英辞書
+      http://www.excite.co.jp/world/text/?wb_lp=JAEN&before=%arg
+
+    ・excite の WEBページ和訳
+      http://www.excite.co.jp/world/url/proceeding/?wb_url=
+                            %arg&wb_lp=ENJA&wb_dis=3&wb_co=excitejapan
+
+
+
+◆ WinAmp を CraftLaunch から操作する
+
+    ・前の曲へ(コマンド名は任意。以下同様)
+        Link : &WinMessage(以下同様。以下省略)
+        Arg  : Winamp,Winamp v1.x,273,40044,0
+
+    ・再生
+        Arg  : Winamp,Winamp v1.x,273,40045,0
+
+    ・一時停止
+        Arg  : Winamp,Winamp v1.x,273,40046,0
+
+    ・停止
+        Arg  : Winamp,Winamp v1.x,273,40047,0
+
+    ・次の曲へ
+        Arg  : Winamp,Winamp v1.x,273,40048,0
+
+    ・ファイルを開く
+        Arg  : Winamp,Winamp v1.x,273,40029,0
+
+    ・リストをクリア
+        Arg  : Winamp,Winamp PE,273,40214,0
+
+    ・リストを開く
+        Arg  : Winamp,Winamp PE,273,40202,0
+
+    ・プレイリストの指定した曲を再生
+        Arg  : Winamp,Winamp PE,273,40194,0
+
+
+◆ ウインドウ操作
+
+    ・全ウインドウを最小化
+
+        Name : IconizeAll
+        Link : &WinMessage
+        Arg  : ,Shell_TrayWnd, 273, 415, 0
+
+    ・全ウインドウを最小化、を戻す
+
+        Name : RestoreAll
+        Link : &WinMessage
+        Arg  : ,Shell_TrayWnd, 273, 416, 0
+
+
+◆ 各種 Windows 終了
+
+    ・Windowsのシャットダウン ダイアログを出す
+
+        Name : PopShutdown
+        Link : &SubCommand
+        Arg  : &KeyDown;17, &Key;27, &KeyUp;17, &Sleep;1, &Key;85
+
+    ・スタンバイ状態にする
+
+        Name : Standby
+        Link : &SubCommand
+        Arg  : PopShutdown, &Sleep;1 &Key;40, &Key;40, &Key;40, &Key;13
+
+    ・ログオフする
+
+        Name : Logoff
+        Link : &SubCommand
+        Arg  : PopShutdown, &Sleep;1 &Key;38, &Key;38, &Key;38, &Key;13
+
+◆ スクリーンセーバを起動する
+
+    Link : &WinMessage
+    Arg  :  , Shell_TrayWnd, 274, 61760, 0
+
+
+◆ Internet Explorer をすべて終了する
+
+    Link : &WinMessageAll
+    Arg  : Microsoft Internet Explorer, , 16, 0, 0
+
+
+◆ 任意のアプリをすべて終了する
+
+    Name : CloseAll
+    Link : &WinMessageAll
+    Arg  : %arg, , 16, 0, 0
+
+    としておき、たとえば、
+
+    CloseAll ; メモ帳
+
+    と実行することで、メモ帳をすべて閉じることが出来ます
+
+
+◆ Becky! を 最大化 / 最小化 / 元のサイズに戻す
+
+    Link : &WinMessage
+    Arg  : Becky!, Becky2MainFrame, 274, 61488, 0 (最大化)
+    Arg  : Becky!, Becky2MainFrame, 274, 61472, 0 (最小化)
+    Arg  : Becky!, Becky2MainFrame, 274, 61728, 0 (元のサイズ)
+
+
+◆ 任意のアプリを 最大化 / 最小化 / 元のサイズに戻す
+
+    Link : &WinMessageAll
+    Arg  : %arg,, 274, 61488, 0 (最大化)
+    Arg  : %arg,, 274, 61472, 0 (最小化)
+    Arg  : %arg,, 274, 61728, 0 (元のサイズ)
+
+
+◆ ダイアルアップネットワークを起動する
+
+    Windows9x の場合は
+
+        Link : RUNDLL32
+        Arg  : RNAUI.DLL,RnaDial エントリ名
+
+    Windows2000 の場合は
+
+        Link : rasphone.exe
+        Arg  : -d エントリ名
+
+
+◆ ダイアルアップネットワークを切断する
+
+    Windows9x の場合は
+
+        Link : RUNDLL32
+        Arg  : RNAUI.DLL,RnaDial エントリ名
+
+    Windows2000 の場合は
+
+        Link : rasphone.exe
+        Arg  : -h エントリ名
+
+
+◆ マイコンピュータやネットワークコンピュータを開く
+
+    Name : MyComputer
+    Link : explorer.exe
+    Arg  : ::{20D04FE0-3AEA-1069-A2D8-08002B30309D}
+
+    Name : NetComputer
+    Link : explorer.exe
+    Arg  : ::{208D2C60-3AEA-1069-A2D7-08002B30309D}
+
+
+◆ 登録コマンドの [C] [S] ボタンの意味は？
+
+    登録コマンドを実行する瞬間に、Ctrl/Shiftキーを押しておくことで、
+    コマンドの実行内容を４タイプに切り替える事が出来ます。
+
+    使い方は自由ですが、例えば、次のような使い方が便利かもしれません。
+
+             Return : アプリを起動
+          S+ Return : アプリをアクティブ化
+          C+ Return : アプリの設定ファイルを編集
+       C+ S+ Return : 閲覧モードで開く
+
+
+◆ コマンドの暴発を防ぐ
+
+    Windowsを終了したり、CraftLaunchを終了したりするコマンドは、次のように
+    して、打ち間違いによる暴発を防ぐことが出来ます。
+
+        Name : ShutDown
+        Link : &TextOut
+        Arg  : <S+C+Enter>
+
+        [C][S] Link : &WinMessage
+        [C][S] Aeg  :  , Shell_TrayWnd, 16, 0, 0
+
+
+    こうすれば、CtrlとShiftを押しながらリターンしなければ、<S+C+Enter> とい
+    う覚え書きを表示するだけで、何も起動しません。
+
+
+◆ テキストエディタとファイラとターミナルエミュレータを、
+   マウスや Alt + Tab を使わずに素早く切り替える
+
+    テキストエディタ [XYZZY] をアクティブ化するコマンド
+        Name : ActivateXyzzy
+        Link : &WinActivate
+        Arg  : xyzzy ,
+
+    ファイラ [あふ] をアクティブ化するコマンド
+        Name : ActivateAfx
+        Link : &WinActivate
+        Arg  : あふ , TApplication
+
+    ターミナルエミュレータ [TeraTerm] をアクティブ化するコマンド
+        Name : ActivateTeraterm
+        Link : &WinActivate
+        Arg  : Tera Term , VTWin32
+
+    を登録しておいて、
+
+        Shift 空欄コマンドに ActivateXyzzy
+        Ctrl  空欄コマンドに ActivateAfx
+        Alt   空欄コマンドに ActivateTeraterm
+
+    を登録すると、
+
+    CraftLaunch ホットキー
+    → ( Shift / Ctrl / Alt ) + Return
+
+    で作業ウインドウを切り替えることが出来ます。
+
+
+◆ すでに起動しているアプリに関しては、新たに起動せずに、アクティブ化する
+
+    &SubCommandOrを使うことで可能です。
+
+        Name : TEXTEDITOR
+        Link : &SubCommandOr
+        Arg  : "&WinActivate;TextEditor" , "c:\soft\edit\editor.exe"
+
+
+◆ &SubCommandに渡す引数が、渡された後で解釈されてほしい
+
+    %% が % に置換されることを利用して、置換のタイミングを、&SubCommand内の
+    実行まで遅らせます
+
+    たとえば、
+
+        Name : CDTEST
+    Link : &SubCommand
+    Arg  : "&CD;%arg" , "&TextOut; %pwd "
+
+    というコマンドでは、C:/dirA というディレクトリにで [CDTEST; C:/dirB]
+    と実行しても、変更前の [C:/dirA] が表示されますが
+
+        Name : CDTEST
+    Link : &SubCommand
+    Arg  : "&CD;%arg" , "&TextOut; %%pwd "
+                                   ↑2つになっていることに注意
+
+    では、変更後の [C:/dirB] が表示されます。
+
